@@ -5,6 +5,8 @@
     <AssemblyName>LetsEncryptMiddleware</AssemblyName>
     <Version>1.0.0.0</Version>
     <Authors>LetsEncryptMiddleware</Authors>
+    <PackageProjectUrl>https://github.com/pablopioli/letsencrypt-middleware</PackageProjectUrl>
+    <Description>An ASP.NET Core Middleware to automate the generation and renewal of TLS certificates</Description>
   </PropertyGroup>
 
   <ItemGroup>
