@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AssemblyName>LetsEncryptMiddleware</AssemblyName>
+    <Version>1.0.0.0</Version>
+    <Authors>LetsEncryptMiddleware</Authors>
   </PropertyGroup>
 
   <ItemGroup>
