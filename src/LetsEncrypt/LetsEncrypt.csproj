@@ -3,13 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AssemblyName>LetsEncryptMiddleware</AssemblyName>
-    <Version>1.0.0.0</Version>
+    <Version>1.1.0.0</Version>
     <Authors>Pablo Pioli</Authors>
     <PackageProjectUrl>https://github.com/pablopioli/letsencrypt-middleware</PackageProjectUrl>
     <Description>An ASP.NET Core Middleware to automate the generation and renewal of TLS certificates</Description>
     <Company />
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
