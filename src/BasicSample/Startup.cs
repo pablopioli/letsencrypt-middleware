@@ -65,14 +65,18 @@ namespace BasicSample
 
             app.MapWhen(
                 httpContext => !httpContext.Request.Path.StartsWithSegments(LetsEncrypt.Constants.ChallengePath),
-                appBuilder => appBuilder.UseHttpsRedirection());
+                appBuilder =>
+                {
+                    appBuilder.UseHttpsRedirection();
+                    app.UseMvc();
+                    app.UseStaticFiles();
+                    app.UseCookiePolicy();
+                }
+            );
 
-            app.UseStaticFiles();
-            app.UseCookiePolicy();
 
             app.UseLetsEncrypt();
 
-            app.UseMvc();
         }
     }
 }

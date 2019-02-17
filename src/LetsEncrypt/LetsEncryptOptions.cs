@@ -82,7 +82,6 @@ namespace LetsEncrypt
             }
         }
 
-
         public int DaysBefore { get; set; } = 15;
 
         /// <summary>
