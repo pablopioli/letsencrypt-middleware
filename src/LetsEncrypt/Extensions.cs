@@ -51,6 +51,8 @@ namespace LetsEncrypt
                 selector.Use(host.HostName, cert);
             }
 
+            ServiceLocator.SetCertificateSelector(selector);
+
             services.AddSingleton<CertificateSelector>(x => selector);
             services.AddSingleton<AccountManager>();
             services.AddSingleton<HttpChallengeResponseMiddleware>();

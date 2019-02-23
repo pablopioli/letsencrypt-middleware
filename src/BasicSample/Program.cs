@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Net;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace BasicSample
 {
@@ -17,8 +11,29 @@ namespace BasicSample
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            var builder = WebHost.CreateDefaultBuilder(args);
+
+            builder.UseStartup<Startup>();
+
+            builder.UseKestrel(options =>
+            {
+                options.Listen(IPAddress.Any, 80);
+                options.Listen(IPAddress.Any, 443, listenOptions =>
+                {
+                    listenOptions.UseHttps(httpsOptions =>
+                    {
+                        httpsOptions.ServerCertificateSelector = (features, name) =>
+                        {
+                            var certSelector = LetsEncrypt.ServiceLocator.GetCertificateSelector();
+                            return certSelector.Select(features, name);
+                        };
+                    });
+                });
+            });
+
+            return builder;
+        }
     }
 }

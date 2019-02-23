@@ -9,22 +9,24 @@ Prior to the certificate expiration, renews it automatically.
 
 ## How to use it
 
-The goal is to make de mimimum changes, all inside startup.cs
+The goal is to make the mimimum changes
+
+### Inside startup.cs
 
 In **ConfigureServices** set the middleware options and add it to the services collection
 ```csharp
 var leOptions = new LetsEncryptOptions
-             {
-                 EmailAddress = "hostmaster@example.com",
-                 AcceptTermsOfService = true,
-                 Hosts = new[] { "example.com" }
-             };
+    {
+        EmailAddress = "hostmaster@example.com",
+        AcceptTermsOfService = true,
+        Hosts = new[] { "example.com" }
+    };
 
 services.AddLetsEncrypt(leOptions);
 ```
 You can find the complete options reference in the next section.
 
-In the **Configure** methods you need to insert the middleware in the pipeline. One important thing: Let's Encrypt servers will call your server back to check you are the owner of the domain you are requesting the certificate for (HTTP Challenge). So the */.well-known/acme-challenge* path must be reserved to LetsEncryptMiddleware. For this path you should not use HTTPS because you still don't have a certificate and Let's Encrypt validation will fail.
+In the **Configure** methods you need to insert the middleware in the pipeline. One important thing: Let's Encrypt servers will call your server back to check you are the owner of the domain you are requesting the certificate for (HTTP Challenge). So the */.well-known/acme-challenge* path must be reserved to LetsEncryptMiddleware. For this path you should not use HTTPS because you still don't have a certificate (the chicken and egg problem) and Let's Encrypt validation will fail. Use HTTP for *LetsEncrypt.Constants.ChallengePath* path.
 
 So you must replace
 
@@ -37,15 +39,46 @@ with
 
 ```csharp
 app.MapWhen(
-  httpContext => !httpContext.Request.Path.StartsWithSegments(Constants.ChallengePath),
-  appBuilder =>
+    httpContext => !httpContext.Request.Path.StartsWithSegments(LetsEncrypt.Constants.ChallengePath),
+    appBuilder =>
       {
-        appBuilder.UseHttpsRedirection();
-        appBuilder.UseMvc();
-      });
+          appBuilder.UseHttpsRedirection();
+          appBuilder.UseMvc();
+      }
+);
+
+app.MapWhen(
+    httpContext => httpContext.Request.Path.StartsWithSegments(LetsEncrypt.Constants.ChallengePath),
+    appBuilder =>
+      {
+          appBuilder.UseLetsEncrypt();
+      }
+);
 ```
 
 In the source code you can find a working sample.
+
+### Inside program.cs
+
+Kestrel needs to access to the certificates to stablish the HTTPS channel. LetsEncryptMiddleware provides a certificate selector that returns the appropiate certicate. Beware that if Kestrel is serving a domain not configured in the options will return null and the request will fail.
+
+```csharp
+builder.UseKestrel(options =>
+{
+  options.Listen(IPAddress.Any, 80);
+  options.Listen(IPAddress.Any, 443, listenOptions =>
+      {
+         listenOptions.UseHttps(httpsOptions =>
+            {
+               httpsOptions.ServerCertificateSelector = (features, name) =>
+                  {
+                     var certSelector = LetsEncrypt.ServiceLocator.GetCertificateSelector();
+                     return certSelector.Select(features, name);
+                  };
+              });
+        });
+});
+```
 
 ## Options
 

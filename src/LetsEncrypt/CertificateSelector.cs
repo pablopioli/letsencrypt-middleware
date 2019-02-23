@@ -53,8 +53,7 @@ namespace LetsEncrypt
         {
             if (!_certs.TryGetValue(hostName, out var retVal))
             {
-                return _certs.ToArray()[0].Value;
-                //return new X509Certificate2();
+                return null;
             }
 
             return retVal;

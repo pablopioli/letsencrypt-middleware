@@ -36,13 +36,18 @@ namespace BasicSample
 
             var leOptions = new LetsEncryptOptions
             {
-                EmailAddress = "testmail4642256@outlook.com",
+                EmailAddress = "hostmaster@example.com",
                 AcceptTermsOfService = true,
-                UseStagingServer = true,
                 CacheFolder = cacheFolder,
-                Hosts = new string[] { "d73a1d56.ngrok.io" },
-                EncryptionPassword = "FBD2690B-63B2-43FB-B331-78004B505D86",
+                Hosts = new string[] { "example.com" },
+                EncryptionPassword = "4570F8BA-0DC7-42AB-9FC2-246EA841453C",
             };
+
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                options.HttpsPort = 443;
+            });
 
             services.AddLetsEncrypt(leOptions);
 
@@ -56,27 +61,27 @@ namespace BasicSample
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
 
             app.MapWhen(
                 httpContext => !httpContext.Request.Path.StartsWithSegments(LetsEncrypt.Constants.ChallengePath),
                 appBuilder =>
                 {
+                    appBuilder.UseExceptionHandler("/Error");
+                    appBuilder.UseHsts();
                     appBuilder.UseHttpsRedirection();
-                    app.UseMvc();
-                    app.UseStaticFiles();
-                    app.UseCookiePolicy();
+                    appBuilder.UseMvc();
+                    appBuilder.UseStaticFiles();
+                    appBuilder.UseCookiePolicy();
                 }
             );
 
-
-            app.UseLetsEncrypt();
-
+            app.MapWhen(
+                httpContext => httpContext.Request.Path.StartsWithSegments(LetsEncrypt.Constants.ChallengePath),
+                appBuilder =>
+                {
+                    appBuilder.UseLetsEncrypt();
+                }
+            );
         }
     }
 }
