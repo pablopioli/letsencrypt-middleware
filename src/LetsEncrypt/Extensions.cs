@@ -32,6 +32,7 @@ namespace LetsEncrypt
                 x.AccountKey = options.AccountKey;
                 x.EncryptionPassword = options.EncryptionPassword;
                 x.DaysBefore = options.DaysBefore;
+                x.UseStagingServer = options.UseStagingServer;
             });
 
             var selector = new CertificateSelector(options);

@@ -38,10 +38,10 @@ namespace LetsEncrypt
         /// </summary>
         public bool UseStagingServer
         {
-            get => AcmeServer == WellKnownServers.LetsEncryptStaging;
+            get => AcmeServer == WellKnownServers.LetsEncryptStagingV2;
             set => AcmeServer = value
-                    ? WellKnownServers.LetsEncryptStaging
-                    : WellKnownServers.LetsEncrypt;
+                    ? WellKnownServers.LetsEncryptStagingV2
+                    : WellKnownServers.LetsEncryptV2;
         }
 
         /// <summary>
