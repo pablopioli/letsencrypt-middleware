@@ -42,21 +42,21 @@ namespace LetsEncrypt
 
         private async void RefreshCertificates(object state)
         {
-            _httpChallengeResponseStore.ClearPendingOrders();
-
-            var hostNames = _certificateSelector.GetCertificatesAboutToExpire();
-
-            if (hostNames.Length > 0)
+            try
             {
-                var account = await _accountManager.GetAccountKey();
+                _httpChallengeResponseStore.ClearPendingOrders();
 
-                if (string.IsNullOrEmpty(account))
+                var hostNames = _certificateSelector.GetCertificatesAboutToExpire();
+
+                if (hostNames.Length > 0)
                 {
-                    _logger.LogError("Canot get Let´s Encrpyt account");
-                }
-                else
-                {
-                    try
+                    var account = await _accountManager.GetAccountKey();
+
+                    if (string.IsNullOrEmpty(account))
+                    {
+                        _logger.LogError("Canot get Let´s Encrpyt account");
+                    }
+                    else
                     {
                         foreach (var host in hostNames)
                         {
@@ -79,12 +79,11 @@ namespace LetsEncrypt
                             await httpChallenge.Validate();
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex.ToString());
-                        throw;
-                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
             }
         }
 
