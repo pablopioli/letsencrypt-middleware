@@ -23,10 +23,7 @@ namespace LetsEncrypt
         {
             var token = context.Request.Path.ToString();
 
-            if (_logger.IsEnabled(LogLevel.Information))
-            {
-                _logger.LogDebug("Requested challenge request for {token}", token);
-            }
+            _logger.LogDebug("Requested challenge request for {token}", token);
 
             // assumes that this middleware has been mapped
             if (token.StartsWith("/"))
@@ -40,10 +37,7 @@ namespace LetsEncrypt
                 return;
             }
 
-            if (_logger.IsEnabled(LogLevel.Information))
-            {
-                _logger.LogDebug("Confirmed challenge request for {token}", token);
-            }
+            _logger.LogDebug("Confirmed challenge request for {token}", token);
 
             context.Response.ContentLength = orderInfo.Challenge.KeyAuthz.Length;
             context.Response.ContentType = "application/octet-stream";
