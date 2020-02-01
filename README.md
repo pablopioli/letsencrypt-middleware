@@ -1,3 +1,5 @@
+***Note that this project is considered obsolete. For a more up to date solution try https://github.com/ffMathy/FluffySpoon.AspNet.LetsEncrypt***
+
 # Let's Encrypt
 
 An ASP.NET Core Middleware to automate the generation and renewal of TLS certificates.
